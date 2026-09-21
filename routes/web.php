@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CoverPhotoController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfilePictureController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -31,6 +32,10 @@ Route::post('/profile/picture', ProfilePictureController::class)
 Route::post('/profile/cover', CoverPhotoController::class)
     ->middleware('auth')
     ->name('profile.cover.update');
+
+Route::post('/posts', [PostController::class, 'store'])
+    ->middleware('auth')
+    ->name('posts.store');
 
 Route::get('/file/{filename}', function ($filename) {
     $file = 'imgs/'.$filename;

@@ -11,7 +11,7 @@
   </nav>  <!-- ===================== Create post dialog ===================== -->
   <div class="modal fade" role="dialog" id="createPostModal" tabindex="-1" aria-labelledby="createPostLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-      <form class="modal-content" action="#" method="post" enctype="multipart/form-data">
+      <form class="modal-content" action="{{ route('posts.store') }}" method="post" enctype="multipart/form-data">
         <div class="modal-header">
           <h2 class="modal-title h5" id="createPostLabel">Create post</h2>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -22,12 +22,10 @@
             <img class="avatar" src="{{ auth()->user()->profile_photo ? asset('storage/'.auth()->user()->profile_photo) : asset('assets/img/avatar-1.svg') }}" alt="">
             <div>
               <p class="fw-semibold mb-1">{{ auth()->user()->name }}</p>
-              <label class="visually-hidden" for="postAudience">Who can see this post</label>
-              <select class="form-select form-select-sm w-auto" id="postAudience" name="audience">
-                <option value="public" selected>🌐 Public</option>
-                <option value="friends">👥 Friends</option>
-                <option value="friends-except">👥 Friends except…</option>
-                <option value="only-me">🔒 Only me</option>
+              <label class="visually-hidden" for="postPrivacy">Who can see this post</label>
+              <select class="form-select form-select-sm w-auto" id="postPrivacy" name="privacy">
+                <option value="public" @selected(auth()->user()->privacy_status === 'public')>Public</option>
+                <option value="private" @selected(auth()->user()->privacy_status === 'private')>Private</option>
               </select>
             </div>
           </div>
@@ -43,10 +41,20 @@
             <label class="visually-hidden" for="postMedia">Attach a photo or video</label>
             <input type="file" id="postMedia" name="media" accept="image/*,video/*">
           </div>
+
+          <div id="postMediaPreview" class="mt-3 d-none text-center">
+            <div class="position-relative d-inline-block">
+              <img id="postMediaPreviewImage" class="img-fluid rounded d-none" style="max-height: 240px;" alt="Selected image preview">
+              <video id="postMediaPreviewVideo" class="img-fluid rounded d-none" style="max-height: 240px;" controls></video>
+              <button type="button" id="postMediaRemove" class="btn btn-sm btn-dark position-absolute top-0 end-0 m-1" aria-label="Remove selected file">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+              </button>
+            </div>
+            <p id="postMediaName" class="small text-secondary mt-1 mb-0"></p>
+          </div>
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Save draft</button>
           <button type="submit" class="btn btn-primary px-4">Post</button>
         </div>
       </form>

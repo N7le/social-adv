@@ -23,6 +23,7 @@ class PostFactory extends Factory
             'body' => fake()->paragraph(),
             'media_path' => null,
             'media_type' => null,
+            'privacy' => 'public',
         ];
     }
 }
