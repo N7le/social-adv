@@ -35,46 +35,7 @@
         </div>
 
         <div class="col-12 col-lg-6 d-flex justify-content-center justify-content-lg-end">
-          <div class="card auth-card">
-            <div class="card-body p-4 p-sm-5">
-              <h1 class="h4 mb-1">Log in</h1>
-              <p class="text-secondary mb-4">Welcome back. Pick up where you left off.</p>
-
-              <form action="{{ route('login.store') }}" method="post" novalidate>
-                <div class="mb-3">
-                  <label class="form-label" for="loginIdentifier">Email or username</label>
-                  <input type="text" @class(['form-control', 'is-invalid' => $errors->has('identifier')]) id="loginIdentifier" name="identifier"
-                         value="{{ old('identifier') }}" autocomplete="username" placeholder="you@example.com" required autofocus>
-                  @error('identifier')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
-                </div>
-
-                <div class="mb-3">
-                  <div class="d-flex justify-content-between align-items-baseline">
-                    <label class="form-label" for="loginPassword">Password</label>
-                    <a class="small link-muted" href="#">Forgot password?</a>
-                  </div>
-                  <input type="password" @class(['form-control', 'is-invalid' => $errors->has('password')]) id="loginPassword" name="password"
-                         autocomplete="current-password" required>
-                  @error('password')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
-                </div>
-
-                <div class="form-check mb-4">
-                  <input class="form-check-input" type="checkbox" id="loginRemember" name="remember" value="1" @checked(old('remember', true))>
-                  <label class="form-check-label" for="loginRemember">Keep me logged in</label>
-                </div>
-
-                <button class="btn btn-primary w-100 py-2 mb-3" type="submit">Log in</button>
-
-                <p class="divider-text mb-3">new here?</p>
-
-                <a class="btn btn-light w-100 py-2" href="{{ route('register') }}">Create an account</a>
-              </form>
-            </div>
-          </div>
+          <livewire:login/>
         </div>
       </div>
 
