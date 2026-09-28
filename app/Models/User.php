@@ -15,6 +15,7 @@ use Illuminate\Notifications\Notifiable;
     'name',
     'username',
     'email',
+    'phone',
     'password',
     'bio',
     'work',
@@ -24,6 +25,8 @@ use Illuminate\Notifications\Notifiable;
     'birthday',
     'profile_photo',
     'cover_photo',
+    'posts_audience',
+    'request_audience',
 ])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable

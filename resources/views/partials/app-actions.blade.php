@@ -24,8 +24,8 @@
               <p class="fw-semibold mb-1">{{ auth()->user()->name }}</p>
               <label class="visually-hidden" for="postPrivacy">Who can see this post</label>
               <select class="form-select form-select-sm w-auto" id="postPrivacy" name="privacy">
-                <option value="public" @selected(auth()->user()->privacy_status === 'public')>Public</option>
-                <option value="private" @selected(auth()->user()->privacy_status === 'private')>Private</option>
+                <option value="public" @selected(auth()->user()->posts_audience === 'public')>Public</option>
+                <option value="private" @selected(auth()->user()->posts_audience === 'private')>Friends</option>
               </select>
             </div>
           </div>
