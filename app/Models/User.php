@@ -34,6 +34,46 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
+    // Relationships
+    public function friendRequestsSent(): HasMany
+    {
+        return $this->hasMany(FriendRequest::class, 'sender_id');
+    }
+
+    public function friendRequestsReceived(): HasMany
+    {
+        return $this->hasMany(FriendRequest::class, 'receiver_id');
+    }
+
+    public function friends()
+    {
+        $friendsIds = $this->friendRequestsSent()->where('status', 'accepted')->pluck('receiver_id')
+            ->merge($this->friendRequestsReceived()->where('status', 'accepted')->pluck('sender_id'));
+
+        return User::whereIn('id', $friendsIds);
+    }
+
+    public function isFriendsWith(User $user): bool
+    {
+        return $this->friends()->where('id', $user->id)->exists();
+    }
+
+    public function getFriendRequest(User $user)
+    {
+        return $this->friendRequestsSent()->where('receiver_id', $user->id)->first()
+            ?? $this->friendRequestsReceived()->where('sender_id', $user->id)->first();
+    }
+
+    public function isRequestSentTo(User $user): bool
+    {
+        return $this->friendRequestsSent()->where('receiver_id', $user->id)->where('status', 'pending')->exists();
+    }
+
+    public function isRequestReceivedFrom(User $user): bool
+    {
+        return $this->friendRequestsReceived()->where('sender_id', $user->id)->where('status', 'pending')->exists();
+    }
+
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class);

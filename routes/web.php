@@ -3,12 +3,18 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CoverPhotoController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfilePictureController;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
 Route::view('/', 'feed')->name('home');
-Route::view('/profile', 'profile')->name('profile');
+Route::get('/profile', function (Request $request): RedirectResponse {
+    return redirect()->route('profile.show', ['username' => $request->user()->username]);
+})->middleware('auth')->name('profile');
+Route::get('/profile/{username:username}', ProfileController::class)->name('profile.show');
 Route::view('/friends', 'friends')->name('friends');
 Route::view('/messages', 'messages')->name('messages');
 Route::view('/notifications', 'notifications')->name('notifications');
@@ -37,8 +43,8 @@ Route::post('/posts', [PostController::class, 'store'])
     ->middleware('auth')
     ->name('posts.store');
 
-Route::get('/file/{filename}', function ($filename) {
-    $file = 'imgs/'.$filename;
+Route::get('/file/posts/{filename}', function ($filename) {
+    $file = 'posts/'.$filename;
 
     return Storage::disk('local')->response($file);
 })->middleware('auth');
