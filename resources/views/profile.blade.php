@@ -94,52 +94,7 @@
         @endif
 
         @forelse ($posts as $post)
-          <article class="card mb-3">
-            <h2 class="visually-hidden">Post by {{ $profileUser->name }}</h2>
-            <div class="card-body pb-2">
-              <header class="d-flex align-items-start gap-2 mb-2">
-                <img class="avatar" src="{{ $profileUser->profile_photo ? asset('storage/'.$profileUser->profile_photo) : asset('assets/img/avatar-1.svg') }}" alt="{{ $profileUser->name }}">
-                <div class="flex-grow-1 min-w-0">
-                  <p class="mb-0"><span class="fw-semibold">{{ $profileUser->name }}</span></p>
-                  <p class="small text-secondary mb-0">
-                    <time datetime="{{ $post->created_at->toIso8601String() }}">{{ $post->created_at->diffForHumans() }}</time> ·
-                    @if ($post->privacy === 'private')
-                      <i class="bi bi-people-fill" aria-hidden="true"></i> Friends
-                    @else
-                      <i class="bi bi-globe-americas" aria-hidden="true"></i> Public
-                    @endif
-                  </p>
-                </div>
-              </header>
-
-              @if ($post->body)
-                <p class="mb-0">{{ $post->body }}</p>
-              @endif
-            </div>
-
-            @if ($post->media_path)
-              @if (str_starts_with($post->media_type ?? '', 'video/'))
-                <video class="post-photo" controls preload="metadata">
-                  <source src="{{ url('/file/'.$post->media_path) }}" type="{{ $post->media_type }}">
-                </video>
-              @else
-                <img class="post-photo" src="{{ url('/file/'.$post->media_path) }}" alt="Image shared by {{ $profileUser->name }}">
-              @endif
-            @endif
-
-            <div class="card-body">
-              <div class="d-flex align-items-center justify-content-between small text-secondary">
-                <span>203 likes</span>
-                <span><a class="link-muted" href="#">31 comments</a> · <a class="link-muted" href="#">6 shares</a></span>
-              </div>
-              <hr class="my-2">
-              <div class="btn-group w-100 post-actions" role="group" aria-label="Post actions">
-                <button class="btn" type="button"><i class="bi bi-hand-thumbs-up me-1" aria-hidden="true"></i>Like</button>
-                <button class="btn" type="button"><i class="bi bi-chat me-1" aria-hidden="true"></i>Comment</button>
-                <button class="btn" type="button"><i class="bi bi-share me-1" aria-hidden="true"></i>Share</button>
-              </div>
-            </div>
-          </article>
+          <x-post :post="$post" :author="$profileUser" />
         @empty
           <section class="card">
             <div class="card-body text-center text-secondary py-5">

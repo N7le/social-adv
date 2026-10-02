@@ -1,3 +1,27 @@
+document.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-copy-share-url]');
+
+    if (!button) {
+        return;
+    }
+
+    const status = button.parentElement.querySelector('[data-share-status]');
+
+    if (!navigator.clipboard) {
+        status.textContent = 'Clipboard access is unavailable in this browser.';
+
+        return;
+    }
+
+    navigator.clipboard.writeText(button.dataset.copyShareUrl)
+        .then(() => {
+            status.textContent = 'Post link copied to clipboard.';
+        })
+        .catch(() => {
+            status.textContent = 'Could not copy the post link. Check clipboard permissions.';
+        });
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('postMedia');
 

@@ -4,6 +4,8 @@ use App\Models\FriendRequest;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 new class extends Component {
@@ -17,8 +19,16 @@ new class extends Component {
         $this->updateState();
     }
 
+    #[Computed]
+    public function canSendRequest(): bool
+    {
+        return Gate::allows('sendFriendRequest', $this->target);
+    }
+
     public function addFriend(): void
     {
+        Gate::authorize('sendFriendRequest', $this->target);
+
         FriendRequest::create([
             'sender_id' => Auth::id(),
             'receiver_id' => $this->target->id,
@@ -76,9 +86,11 @@ new class extends Component {
 <div>
     @switch($state)
         @case('nothing')
-            <button class="btn btn-primary" type="button" wire:click="addFriend">
-                <i class="bi bi-person-plus me-1" aria-hidden="true"></i>Add Friend
-            </button>
+            @if ($this->canSendRequest)
+                <button class="btn btn-primary" type="button" wire:click="addFriend">
+                    <i class="bi bi-person-plus me-1" aria-hidden="true"></i>Add Friend
+                </button>
+            @endif
         @break
 
         @case('friends')

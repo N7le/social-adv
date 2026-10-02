@@ -2,15 +2,18 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CoverPhotoController;
+use App\Http\Controllers\MainController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfilePictureController;
+use App\Models\Post;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
-Route::view('/', 'feed')->name('home');
+Route::get('/', MainController::class)->name('home');
 Route::get('/profile', function (Request $request): RedirectResponse {
     return redirect()->route('profile.show', ['username' => $request->user()->username]);
 })->middleware('auth')->name('profile');
@@ -43,8 +46,11 @@ Route::post('/posts', [PostController::class, 'store'])
     ->middleware('auth')
     ->name('posts.store');
 
-Route::get('/file/posts/{filename}', function ($filename) {
+Route::get('/file/posts/{filename}', function (string $filename) {
     $file = 'posts/'.$filename;
+    $post = Post::where('media_path', $file)->firstOrFail();
+
+    Gate::authorize('view', $post);
 
     return Storage::disk('local')->response($file);
-})->middleware('auth');
+});
