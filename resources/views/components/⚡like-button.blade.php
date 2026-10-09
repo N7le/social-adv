@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use App\Events\PostInteraction;
 
 new class extends Component
 {
@@ -26,6 +27,7 @@ new class extends Component
             Gate::authorize('like', $this->post);
 
             $this->post->likes()->syncWithoutDetaching([Auth::id()]);
+            event(new PostInteraction(Auth::user(), $this->post, 'liked'));
         }
 
         unset($this->isLiked);

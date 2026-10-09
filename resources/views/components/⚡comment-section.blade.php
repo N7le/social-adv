@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use App\Events\PostInteraction;
 
 new class extends Component
 {
@@ -75,6 +76,9 @@ new class extends Component
             'body' => $validated['body'],
         ]);
 
+        if($parentComment == null){
+            event(new PostInteraction(Auth::user(), $this->post, 'commented'));
+        }
         $this->body = '';
         $this->replyToId = null;
         unset($this->thread);

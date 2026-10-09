@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="@yield('description', 'Connect and share with YouBee Social.')">
     <meta name="theme-color" content="#d97706">
+    <meta name="auth-user-id" content="{{Auth::id()}}">
     <title>@yield('title', 'YouBee Social')</title>
 
     <link rel="icon" href="{{ asset('assets/img/logo.svg') }}" type="image/svg+xml">
@@ -35,6 +36,8 @@
     </div>
 
     @include('partials.app-actions', ['activePage' => trim($__env->yieldContent('activePage', 'home'))])
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="notificationToasts"></div>
 
     @stack('modals')
 
