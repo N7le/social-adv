@@ -91,6 +91,12 @@ if (userId) {
     window.Echo.private(`users.${userId}`)
         .listen('.post.notification.created', (notification) => {
             showNotificationToast(notification.message);
+        })
+        .listen('.message.created', (message) => {
+            // The chat component handles this event on the messages page.
+            if (!document.getElementById('chatFeed')) {
+                showNotificationToast(`${message.sender.name}: ${message.body}`);
+            }
         });
 }
 

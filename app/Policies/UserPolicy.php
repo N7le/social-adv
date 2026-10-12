@@ -21,4 +21,12 @@ class UserPolicy
 
         return true;
     }
+
+    /**
+     * Determine whether the user can send a direct message to the given user.
+     */
+    public function sendMessage(User $user, User $target): bool
+    {
+        return $user->id !== $target->id && $user->isFriendsWith($target);
+    }
 }

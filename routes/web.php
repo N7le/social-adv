@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CoverPhotoController;
+use App\Http\Controllers\FriendsController;
 use App\Http\Controllers\MainController;
+use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfilePictureController;
@@ -18,9 +20,10 @@ Route::get('/profile', function (Request $request): RedirectResponse {
     return redirect()->route('profile.show', ['username' => $request->user()->username]);
 })->middleware('auth')->name('profile');
 Route::get('/profile/{username:username}', ProfileController::class)->name('profile.show');
-Route::view('/friends', 'friends')->name('friends');
-Route::view('/messages', 'messages')->name('messages');
-Route::view('/notifications', 'notifications')->name('notifications');
+Route::get('/friends', FriendsController::class)->middleware('auth')->name('friends');
+Route::view('/messages', 'messages')->middleware('auth')->name('messages');
+Route::get('/notifications', [NotificationsController::class, 'index'])->middleware('auth')->name('notifications');
+Route::post('/notifications/read-all', [NotificationsController::class, 'markAllAsRead'])->middleware('auth')->name('notifications.readAll');
 Route::view('/settings', 'settings')->name('settings')->middleware('auth');
 
 Route::middleware('guest')->controller(AuthController::class)->group(function (): void {

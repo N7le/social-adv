@@ -62,7 +62,10 @@
               <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="tab-requests" data-bs-toggle="pill" data-bs-target="#panel-requests"
                         type="button" role="tab" aria-controls="panel-requests" aria-selected="true">
-                  Requests <span class="badge rounded-pill text-bg-danger">2</span>
+                  Requests
+                  @if ($receivedRequests->isNotEmpty())
+                    <span class="badge rounded-pill text-bg-danger">{{ $receivedRequests->count() }}</span>
+                  @endif
                 </button>
               </li>
               <li class="nav-item" role="presentation">
@@ -85,43 +88,16 @@
 
               <!-- ========== Requests ========== -->
               <div class="tab-pane fade show active" id="panel-requests" role="tabpanel" aria-labelledby="tab-requests" tabindex="0">
-                <h2 class="h6 text-secondary mb-3">2 people want to be your friend</h2>
-                <ul class="list-unstyled vstack gap-2 mb-0">
-
-                  <li class="d-flex flex-wrap align-items-center gap-3 p-2 rounded hover-surface">
-                    <a href="{{ route('profile') }}"><img class="avatar avatar-xl" src="{{ asset('assets/img/avatar-4.svg') }}" alt="Ali Ayoub"></a>
-                    <div class="flex-grow-1 min-w-0">
-                      <a class="fw-semibold text-body text-decoration-none d-block text-truncate" href="{{ route('profile') }}">Ali Ayoub</a>
-                      <p class="mutuals mb-1">12 mutual friends · Product manager at Hivework</p>
-                      <div class="avatar-stack" aria-hidden="true">
-                        <img class="avatar avatar-xs" src="{{ asset('assets/img/avatar-2.svg') }}" alt="">
-                        <img class="avatar avatar-xs" src="{{ asset('assets/img/avatar-3.svg') }}" alt="">
-                        <img class="avatar avatar-xs" src="{{ asset('assets/img/avatar-7.svg') }}" alt="">
-                      </div>
-                    </div>
-                    <div class="d-flex gap-2 ms-auto">
-                      <button class="btn btn-primary" type="button">Confirm</button>
-                      <button class="btn btn-light" type="button">Delete</button>
-                    </div>
-                  </li>
-
-                  <li class="d-flex flex-wrap align-items-center gap-3 p-2 rounded hover-surface">
-                    <a href="{{ route('profile') }}"><img class="avatar avatar-xl" src="{{ asset('assets/img/avatar-5.svg') }}" alt="Elie Amin"></a>
-                    <div class="flex-grow-1 min-w-0">
-                      <a class="fw-semibold text-body text-decoration-none d-block text-truncate" href="{{ route('profile') }}">Elie Amin</a>
-                      <p class="mutuals mb-1">5 mutual friends · Lisbon, Portugal</p>
-                      <div class="avatar-stack" aria-hidden="true">
-                        <img class="avatar avatar-xs" src="{{ asset('assets/img/avatar-2.svg') }}" alt="">
-                        <img class="avatar avatar-xs" src="{{ asset('assets/img/avatar-8.svg') }}" alt="">
-                      </div>
-                    </div>
-                    <div class="d-flex gap-2 ms-auto">
-                      <button class="btn btn-primary" type="button">Confirm</button>
-                      <button class="btn btn-light" type="button">Delete</button>
-                    </div>
-                  </li>
-
-                </ul>
+                @if ($receivedRequests->isEmpty())
+                  <p class="text-secondary mb-0">No pending friend requests.</p>
+                @else
+                  <h2 class="h6 text-secondary mb-3">{{ $receivedRequests->count() }} {{ Str::plural('person', $receivedRequests->count()) }} want{{ $receivedRequests->count() === 1 ? 's' : '' }} to be your friend</h2>
+                  <ul class="list-unstyled vstack gap-2 mb-0">
+                    @foreach ($receivedRequests as $friendRequest)
+                      <x-friend-request :friend-request="$friendRequest" />
+                    @endforeach
+                  </ul>
+                @endif
               </div>
 
               <!-- ========== Suggestions ========== -->
@@ -196,135 +172,41 @@
 
               <!-- ========== All friends ========== -->
               <div class="tab-pane fade" id="panel-all" role="tabpanel" aria-labelledby="tab-all" tabindex="0">
-                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-                  <h2 class="h6 text-secondary mb-0">486 friends</h2>
-                  <div class="d-flex gap-2">
-                    <label class="visually-hidden" for="friendSort">Sort friends</label>
-                    <select class="form-select form-select-sm w-auto" id="friendSort">
-                      <option>Recently added</option>
-                      <option>Name A–Z</option>
-                      <option>Hometown</option>
-                    </select>
-                  </div>
-                </div>
+                @if ($friends->isEmpty())
+                  <p class="text-secondary mb-0">You haven't added any friends yet.</p>
+                @else
+                  <h2 class="h6 text-secondary mb-3">{{ $friends->count() }} {{ Str::plural('friend', $friends->count()) }}</h2>
 
-                <ul class="list-unstyled vstack gap-1 mb-0">
-
-                  <li class="d-flex align-items-center gap-3 p-2 rounded hover-surface">
-                    <span class="presence presence--online">
-                      <img class="avatar avatar-lg" src="{{ asset('assets/img/avatar-2.svg') }}" alt=""><span class="presence__dot"></span>
-                    </span>
-                    <span class="flex-grow-1 min-w-0">
-                      <a class="fw-semibold text-body text-decoration-none d-block text-truncate" href="{{ route('profile') }}">Ali Nahleh</a>
-                      <span class="mutuals">18 mutual friends</span>
-                    </span>
-                    <a class="btn btn-sm btn-light" href="{{ route('messages') }}"><i class="bi bi-chat-dots me-1" aria-hidden="true"></i>Message</a>
-                    <div class="dropdown">
-                      <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Options for Ali Nahleh">
-                        <i class="bi bi-three-dots" aria-hidden="true"></i>
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-                        <li><button class="dropdown-item" type="button"><i class="bi bi-star me-2" aria-hidden="true"></i>Add to favourites</button></li>
-                        <li><button class="dropdown-item" type="button"><i class="bi bi-eye-slash me-2" aria-hidden="true"></i>Unfollow</button></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><button class="dropdown-item text-danger" type="button"><i class="bi bi-person-dash me-2" aria-hidden="true"></i>Unfriend</button></li>
-                      </ul>
-                    </div>
-                  </li>
-
-                  <li class="d-flex align-items-center gap-3 p-2 rounded hover-surface">
-                    <span class="presence presence--online">
-                      <img class="avatar avatar-lg" src="{{ asset('assets/img/avatar-3.svg') }}" alt=""><span class="presence__dot"></span>
-                    </span>
-                    <span class="flex-grow-1 min-w-0">
-                      <a class="fw-semibold text-body text-decoration-none d-block text-truncate" href="{{ route('profile') }}">Maysam Chaalan</a>
-                      <span class="mutuals">24 mutual friends</span>
-                    </span>
-                    <a class="btn btn-sm btn-light" href="{{ route('messages') }}"><i class="bi bi-chat-dots me-1" aria-hidden="true"></i>Message</a>
-                    <div class="dropdown">
-                      <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Options for Maysam Chaalan">
-                        <i class="bi bi-three-dots" aria-hidden="true"></i>
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-                        <li><button class="dropdown-item" type="button"><i class="bi bi-star me-2" aria-hidden="true"></i>Add to favourites</button></li>
-                        <li><button class="dropdown-item" type="button"><i class="bi bi-eye-slash me-2" aria-hidden="true"></i>Unfollow</button></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><button class="dropdown-item text-danger" type="button"><i class="bi bi-person-dash me-2" aria-hidden="true"></i>Unfriend</button></li>
-                      </ul>
-                    </div>
-                  </li>
-
-                  <li class="d-flex align-items-center gap-3 p-2 rounded hover-surface">
-                    <span class="presence presence--away">
-                      <img class="avatar avatar-lg" src="{{ asset('assets/img/avatar-7.svg') }}" alt=""><span class="presence__dot"></span>
-                    </span>
-                    <span class="flex-grow-1 min-w-0">
-                      <a class="fw-semibold text-body text-decoration-none d-block text-truncate" href="{{ route('profile') }}">Elias Al Omar</a>
-                      <span class="mutuals">9 mutual friends</span>
-                    </span>
-                    <a class="btn btn-sm btn-light" href="{{ route('messages') }}"><i class="bi bi-chat-dots me-1" aria-hidden="true"></i>Message</a>
-                    <div class="dropdown">
-                      <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Options for Elias Al Omar">
-                        <i class="bi bi-three-dots" aria-hidden="true"></i>
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-                        <li><button class="dropdown-item" type="button"><i class="bi bi-star me-2" aria-hidden="true"></i>Add to favourites</button></li>
-                        <li><button class="dropdown-item" type="button"><i class="bi bi-eye-slash me-2" aria-hidden="true"></i>Unfollow</button></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><button class="dropdown-item text-danger" type="button"><i class="bi bi-person-dash me-2" aria-hidden="true"></i>Unfriend</button></li>
-                      </ul>
-                    </div>
-                  </li>
-
-                  <li class="d-flex align-items-center gap-3 p-2 rounded hover-surface">
-                    <span class="presence">
-                      <img class="avatar avatar-lg" src="{{ asset('assets/img/avatar-8.svg') }}" alt=""><span class="presence__dot"></span>
-                    </span>
-                    <span class="flex-grow-1 min-w-0">
-                      <a class="fw-semibold text-body text-decoration-none d-block text-truncate" href="{{ route('profile') }}">Haitham Ismail</a>
-                      <span class="mutuals">31 mutual friends</span>
-                    </span>
-                    <a class="btn btn-sm btn-light" href="{{ route('messages') }}"><i class="bi bi-chat-dots me-1" aria-hidden="true"></i>Message</a>
-                    <div class="dropdown">
-                      <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Options for Haitham Ismail">
-                        <i class="bi bi-three-dots" aria-hidden="true"></i>
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-                        <li><button class="dropdown-item" type="button"><i class="bi bi-star me-2" aria-hidden="true"></i>Add to favourites</button></li>
-                        <li><button class="dropdown-item" type="button"><i class="bi bi-eye-slash me-2" aria-hidden="true"></i>Unfollow</button></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><button class="dropdown-item text-danger" type="button"><i class="bi bi-person-dash me-2" aria-hidden="true"></i>Unfriend</button></li>
-                      </ul>
-                    </div>
-                  </li>
-                </ul>
-
-                <div class="text-center mt-4">
-                  <button class="btn btn-light" type="button">Load more</button>
-                </div>
+                  <ul class="list-unstyled vstack gap-1 mb-0">
+                    @foreach ($friends as $friend)
+                      <li class="d-flex align-items-center gap-3 p-2 rounded hover-surface">
+                        <a href="{{ route('profile.show', ['username' => $friend->username]) }}">
+                          <img class="avatar avatar-lg" src="{{ $friend->profile_photo ? asset('storage/'.$friend->profile_photo) : asset('assets/img/avatar-1.svg') }}" alt="{{ $friend->name }}">
+                        </a>
+                        <span class="flex-grow-1 min-w-0">
+                          <a class="fw-semibold text-body text-decoration-none d-block text-truncate" href="{{ route('profile.show', ['username' => $friend->username]) }}">{{ $friend->name }}</a>
+                          <span class="mutuals">{{ '@'.$friend->username }}</span>
+                        </span>
+                        <a class="btn btn-sm btn-light" href="{{ route('messages') }}"><i class="bi bi-chat-dots me-1" aria-hidden="true"></i>Message</a>
+                        <livewire:add-friend :target="$friend" :wire:key="'friend-'.$friend->id" />
+                      </li>
+                    @endforeach
+                  </ul>
+                @endif
               </div>
 
               <!-- ========== Sent requests ========== -->
               <div class="tab-pane fade" id="panel-sent" role="tabpanel" aria-labelledby="tab-sent" tabindex="0">
-                <h2 class="h6 text-secondary mb-3">Requests you've sent</h2>
-                <ul class="list-unstyled vstack gap-1 mb-0">
-                  <li class="d-flex align-items-center gap-3 p-2 rounded hover-surface">
-                    <img class="avatar avatar-lg" src="{{ asset('assets/img/avatar-6.svg') }}" alt="">
-                    <span class="flex-grow-1 min-w-0">
-                      <a class="fw-semibold text-body text-decoration-none d-block text-truncate" href="{{ route('profile') }}">Baqer Alayyan</a>
-                      <span class="mutuals">Sent <time datetime="2026-09-11">3 days ago</time></span>
-                    </span>
-                    <button class="btn btn-sm btn-light" type="button">Cancel request</button>
-                  </li>
-                  <li class="d-flex align-items-center gap-3 p-2 rounded hover-surface">
-                    <img class="avatar avatar-lg" src="{{ asset('assets/img/avatar-9.svg') }}" alt="">
-                    <span class="flex-grow-1 min-w-0">
-                      <a class="fw-semibold text-body text-decoration-none d-block text-truncate" href="{{ route('profile') }}">Rashad Nahleh</a>
-                      <span class="mutuals">Sent <time datetime="2026-09-06">1 week ago</time></span>
-                    </span>
-                    <button class="btn btn-sm btn-light" type="button">Cancel request</button>
-                  </li>
-                </ul>
+                @if ($sentRequests->isEmpty())
+                  <p class="text-secondary mb-0">You haven't sent any friend requests.</p>
+                @else
+                  <h2 class="h6 text-secondary mb-3">Requests you've sent</h2>
+                  <ul class="list-unstyled vstack gap-1 mb-0">
+                    @foreach ($sentRequests as $friendRequest)
+                      <x-friend-request :friend-request="$friendRequest" />
+                    @endforeach
+                  </ul>
+                @endif
               </div>
             </div>
           </div>
